@@ -27,3 +27,9 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### 标注重要的日子
+```
+
+需要要传入一个YM的数组给我
+```

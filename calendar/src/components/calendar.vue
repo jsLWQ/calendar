@@ -3,6 +3,8 @@
     <div class="lq_box">
       <input
         type="text"
+        v-model="input"
+        style="text-indent:2em;font-size: inherit;color: #606266;"
         :class="{ Border: isBorder }"
         readonly
         @click="isBorder = !isBorder"
@@ -50,6 +52,7 @@
               v-for="item in oneMonth"
               :key="item.date"
               :style="{ color: item.color }"
+              @click="ymClick(item)"
               >{{ item.date.split("/")[2]
               }}<i v-if="item.isOk" class="foot_i"></i
             ></span>
@@ -74,11 +77,12 @@ export default {
   },
   data() {
     return {
-      isBorder: true,
+      isBorder: false,
       oneMonth: [], // 一个月的全部日期
       LastSeven: [], // 上个月的最后七天
       NextMonth: [], // 下个月的前七天
-      LastYear: this.dateFormat(new Date())
+      LastYear: this.dateFormat(new Date()),
+      input: ''
     };
   },
   watch: {
@@ -88,6 +92,17 @@ export default {
       this.getNextMonthSeven(); // 下个月七天
       this.getOneday(); // 补全上月
       this.getlastDay(); // 补全下月
+      if (this.YM.length) {
+        this.labelImportant();
+      }
+    },
+    'YM' () {
+      this.getOneMonth(this.LastYear);
+      this.getLastMonthSeven(); // 上个月七天
+      this.getNextMonthSeven(); // 下个月七天
+      this.getOneday(); // 补全上月
+      this.getlastDay(); // 补全下月
+      console.log(this.YM)
       if (this.YM.length) {
         this.labelImportant();
       }
@@ -123,7 +138,7 @@ export default {
     this.getNextMonthSeven(); // 下个月七天
     this.getOneday(); // 补全上月
     this.getlastDay(); // 补全下月
-    console.log(this.YM.length);
+    console.log(this.YM);
     if (this.YM.length) {
       this.labelImportant();
     }
@@ -342,6 +357,12 @@ export default {
           this.oneMonth[index].isOk = true;
         }
       });
+    },
+    // 
+    ymClick (item) {
+      console.log(item)
+      this.input  = item.date
+      this.isBorder = false
     }
   }
 };
