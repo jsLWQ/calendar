@@ -20,8 +20,8 @@
             ></i>
           </div>
           <div class="headle_two">
-            <span class="span_one">{{LastYear.split('/')[0]}}年</span>
-            <span class="span_two">{{LastYear.split('/')[1]}}月</span>
+            <span class="span_one">{{ LastYear.split("/")[0] }}年</span>
+            <span class="span_two">{{ LastYear.split("/")[1] }}月</span>
           </div>
           <div class="headle_one">
             <i
@@ -50,7 +50,8 @@
               v-for="item in oneMonth"
               :key="item.date"
               :style="{ color: item.color }"
-              >{{ item.date.split("/")[2] }}<i class="foot_i"></i
+              >{{ item.date.split("/")[2]
+              }}<i v-if="item.isOk" class="foot_i"></i
             ></span>
           </div>
         </div>
@@ -65,6 +66,12 @@
 <script>
 export default {
   name: "ym",
+  props: {
+    YM: {
+      type: [Array],
+      default: false
+    }
+  },
   data() {
     return {
       isBorder: true,
@@ -75,12 +82,15 @@ export default {
     };
   },
   watch: {
-    'LastYear' () {
-      this.getOneMonth(this.LastYear)
+    LastYear() {
+      this.getOneMonth(this.LastYear);
       this.getLastMonthSeven(); // 上个月七天
       this.getNextMonthSeven(); // 下个月七天
       this.getOneday(); // 补全上月
       this.getlastDay(); // 补全下月
+      if (this.YM.length) {
+        this.labelImportant();
+      }
     }
   },
   // 自定义指令实现点击空白处隐藏下拉列表
@@ -113,6 +123,10 @@ export default {
     this.getNextMonthSeven(); // 下个月七天
     this.getOneday(); // 补全上月
     this.getlastDay(); // 补全下月
+    console.log(this.YM.length);
+    if (this.YM.length) {
+      this.labelImportant();
+    }
     // this.Year = this.dateFormat(new Date())
   },
   methods: {
@@ -132,7 +146,8 @@ export default {
     },
     minusYear() {
       // console.log(this.LastYear.split('/')[1]-1);
-      this.LastYear = this.LastYear.split('/')[0]-1+'/'+this.LastYear.split('/')[1]
+      this.LastYear =
+        this.LastYear.split("/")[0] - 1 + "/" + this.LastYear.split("/")[1];
       // console.log(this.LastYear)
       // this.getOneMonth(this.LastYear)
       // this.getLastMonthSeven(); // 上个月七天
@@ -143,30 +158,35 @@ export default {
     minusMonth() {
       // console.log("minusMonth");
       // console.log(this.LastYear.split('/')[0]+'/'+(this.LastYear.split('/')[1]-1))
-      if((this.LastYear.split('/')[1]-1) <= 0 ) {
-        this.LastYear = this.LastYear.split('/')[0]-1+'/'+'12'
+      if (this.LastYear.split("/")[1] - 1 <= 0) {
+        this.LastYear = this.LastYear.split("/")[0] - 1 + "/" + "12";
         // console.log(this.LastYear)
-        return
+        return;
       }
-      this.LastYear = this.LastYear.split('/')[0]+'/'+(this.LastYear.split('/')[1]-1)
+      this.LastYear =
+        this.LastYear.split("/")[0] + "/" + (this.LastYear.split("/")[1] - 1);
     },
-    addMonth () {
-      console.log((this.LastYear.split('/')[1]*1+1))
-      if((this.LastYear.split('/')[1]*1+1) > 12 ) {
-        this.LastYear = ((this.LastYear.split('/')[0]*1)+1)+'/'+'1'
-        console.log(this.LastYear)
-        return
+    addMonth() {
+      console.log(this.LastYear.split("/")[1] * 1 + 1);
+      if (this.LastYear.split("/")[1] * 1 + 1 > 12) {
+        this.LastYear = this.LastYear.split("/")[0] * 1 + 1 + "/" + "1";
+        console.log(this.LastYear);
+        return;
       }
-      this.LastYear = this.LastYear.split('/')[0]+'/'+(this.LastYear.split('/')[1]*1+1)
+      this.LastYear =
+        this.LastYear.split("/")[0] +
+        "/" +
+        (this.LastYear.split("/")[1] * 1 + 1);
     },
-    addYear () {
+    addYear() {
       // console.log('addYear')
-      this.LastYear = this.LastYear.split('/')[0]*1+1+'/'+this.LastYear.split('/')[1]
+      this.LastYear =
+        this.LastYear.split("/")[0] * 1 + 1 + "/" + this.LastYear.split("/")[1];
     },
     // 获取当月的天数
     getCountDays(time) {
       var curDate = new Date(time);
-      console.log(curDate)
+      console.log(curDate);
       /* 获取当前月份 */
       var curMonth = curDate.getMonth();
       /*  生成实际的月份: 由于curMonth会比实际月份小1, 故需加1 */
@@ -188,8 +208,8 @@ export default {
           "/" +
           (new Date(times).getMonth() + 1 < 10
             ? "0" + (new Date(times).getMonth() + 1)
-            : (new Date(times).getMonth() + 1));
-            // console.log(time)
+            : new Date(times).getMonth() + 1);
+        // console.log(time)
         // 获取一个月的所有日期
         let arrTime = [];
         // 找到当前日期设置不同的颜色
@@ -292,9 +312,9 @@ export default {
     // 补全上个月时间
     getOneday() {
       let day = this.getWhatDay(this.oneMonth[0].date);
-      console.log(day)
-      if(day==0) {
-        return
+      console.log(day);
+      if (day == 0) {
+        return;
       }
       let arr = this.LastSeven.slice(-day);
       // console.log(arr)
@@ -304,12 +324,24 @@ export default {
     // 补全下个月时间
     getlastDay() {
       let day = this.getWhatDay(this.oneMonth[this.oneMonth.length - 1].date);
-      console.log(day)
+      console.log(day);
       if (6 - day != 0) {
-        let arr = this.NextMonth.splice(6-day);
-        console.log(arr,this.NextMonth);
+        let arr = this.NextMonth.splice(6 - day);
+        console.log(arr, this.NextMonth);
         this.oneMonth = this.oneMonth.concat(this.NextMonth);
       }
+    },
+    // 标注重要日子
+    labelImportant() {
+      console.log(this.oneMonth);
+      let index;
+      this.YM.forEach(item => {
+        index = this.oneMonth.findIndex(items => items.date == item);
+        if (index != -1) {
+          console.log(index);
+          this.oneMonth[index].isOk = true;
+        }
+      });
     }
   }
 };
